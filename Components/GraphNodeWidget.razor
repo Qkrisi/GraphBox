@@ -1,0 +1,55 @@
+@using Index = GraphUtil.Pages.Index
+
+<div class="graph-node" style="background: @Node.Color; border: 3px solid black; color:  @(Node.Color == NodeColor.BLACK ? NodeColor.WHITE : NodeColor.BLACK)">
+    @Node.Text
+    @(Reset())
+    @if (Node.DistanceInfo.NegInf || Node.DistanceInfo.DistanceFromStart != null)
+    {
+        <span class="nodeinfo @(Node.Color == NodeColor.RED ? "distancec2" : "distancec1")" style="@(NextInfoLine())">G: @(Node.DistanceInfo.NegInf ? "-\u221e" : Math.Round((double)Node.DistanceInfo.DistanceFromStart, 2))</span>
+    }
+    @if (Node.DistanceInfo.DistanceToEnd != null)
+    {
+        <span class="nodeinfo @(Node.Color == NodeColor.RED ? "distancec2" : "distancec1")" style="@(NextInfoLine())">H: @(Math.Round((double)Node.DistanceInfo.DistanceToEnd, 2))</span>
+        <span class="nodeinfo @(Node.Color == NodeColor.RED ? "distancec2" : "distancec1")" style="@(NextInfoLine())">F: @(Math.Round((double)Node.DistanceInfo.CombinedDistance, 2))</span>
+    }
+    @if (Node.Disc != -1)
+    {
+        <span class="nodeinfo @(Node.Color == NodeColor.RED ? "distancec2" : "distancec1")" style="@(NextInfoLine())">T: @Node.Disc</span>
+    }
+    @if (Node.ShowLow && Node.Low != -1)
+    {
+        <span class="nodeinfo @(Node.Color == NodeColor.RED ? "distancec2" : "distancec1")" style="@(NextInfoLine())">L: @Node.Low</span>
+    }
+    @if (Node.Component != null)
+    {
+        <span class="nodeinfo @(Node.Color == NodeColor.RED ? "distancec2" : "distancec1")" style="@(NextInfoLine())">C: @Node.Component</span>
+    }
+    @(Node.ApplyPages())
+</div>
+
+@code {
+    [Parameter] public GraphNode Node { get; set; }
+
+    private int CurrentPage = 1;
+    private bool NextPage;
+
+    private string Reset()
+    {
+        Node.InfoLines = 0;
+        CurrentPage = 1;
+        NextPage = false;
+        return "";
+    }
+    
+    private string NextInfoLine()
+    {
+        Node.InfoLines++;
+        NextPage ^= true;
+        var res = CurrentPage == Index.Instance.CurrentInfoPage
+            ? ""
+            : "display: none;";
+        if (!NextPage)
+            CurrentPage++;
+        return res;
+    }
+}

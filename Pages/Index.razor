@@ -1,0 +1,261 @@
+﻿@page "/"
+@using GraphUtil.Algorithms.Arguments
+@using GraphUtil.Algorithms.Arguments.ArgumentTypes
+@using GraphUtil.Components
+
+@inject IJSRuntime _JS
+
+<style>
+    html, body {
+        overflow: hidden;
+    }
+
+    .graph-node {
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 2em;
+    }
+    
+    .nodeinfo {
+        font-size: 0.5em;
+    }
+    
+    .distancec1 {
+        color: #F26868;
+    }
+    
+    .distancec2 {
+        color: #ffffff;
+    }
+    
+    .scriptinput {
+        font-family: monospace;
+        text-align: left;
+        border-radius: 25px;
+        border: 1px solid gray;
+        padding: 5px;
+    }
+    
+    .scriptinput textarea {
+        width: 90%;
+        height: 10em;
+        overflow-wrap: normal;
+    }
+    
+    .psc {
+        background-color: #F7EEED;
+        display: block;
+    }
+    
+    .overflowdiv {
+        text-align: left;
+        height: 500px;
+        overflow: auto;
+    }
+    
+    input, textarea {
+        font-size: inherit;
+        font-family: inherit;
+    }
+    
+    #returninput {
+        width: calc(90% - 4.2em);
+    }
+    
+    #modal {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        z-index: 1;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+    
+    #modalform {
+        margin:  0;
+        padding: 10px 20px 10px 20px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 10px;
+        background-color: white;
+        text-align: center;
+    }
+</style>
+
+<div id="modal" hidden="@(CurrentModal == Modal.None)">
+    <div id="modalform">
+        @switch (CurrentModal)
+        {
+            case Modal.Node:
+                <h2>Új csúcs felvétele</h2>
+                <input type="text" placeholder="Csúcs neve" value="@NewNodeName" @onchange="@(e => NewNodeName = e.Value.ToString())">
+                <br>
+                <button @onclick="@ConfirmNode">Elfogad</button>
+                <button @onclick="@CloseAddNodeModal">Mégsem</button>
+                break;
+            case Modal.Edge:
+                <h2>Új él felvétele</h2>
+                <span>Kezdőpont:</span>
+                <select @bind="@StartNode">
+                    <option value="">Kérlek válassz kezdőpontot</option>
+                    @foreach (var name in Nodes.Keys)
+                    {
+                        <option value="@name">@name</option>
+                    }
+                </select>
+                <br>
+                <span>Végpont:</span>
+                <select @bind="@EndNode">
+                    <option value="">Kérlek válassz végpontot</option>
+                    @foreach (var name in Nodes.Keys)
+                    {
+                        <option value="@name">@name</option>
+                    }
+                </select>
+                <br>
+                <input type="number" placeholder="Súly" value="@Weight" @onchange="@(e => Weight = int.TryParse(e.Value.ToString(), out var _Weight) ? _Weight : null)">
+                <br>
+                <input type="checkbox" value="@Bidirectional" @onchange="@(e => Bidirectional = (bool)e.Value)">
+                <span>Kétirányú</span>
+                <br>
+                <button @onclick="@ConfirmEdge">Elfogad</button>
+                <button @onclick="@CloseAddEdgeModal">Mégsem</button>
+                break;
+            case Modal.Algorithm:
+                <h2>@CurrentAlgorithm.FullName</h2>
+                <p>@CurrentAlgorithm.ShortDescription</p>
+                var arguments = CurrentAlgorithm.Arguments;
+                @for (int i = 0; i < arguments.Length; i++)
+                {
+                    var argument = arguments[i];
+                    <span>@argument.Name: </span>
+                    @switch (argument)
+                    {
+                        case AlgorithmArgument<GraphNode> nodeArgument:
+                            <select value="@(nodeArgument.Value?.Text ?? "")" @onchange="@(e => nodeArgument.Value = Nodes.ContainsKey(e.Value.ToString()) ? Nodes[e.Value.ToString()] : null)">
+                                <option value=""></option>
+                                @foreach (var node in Nodes.Keys)
+                                {
+                                    <option value="@node">@node</option>
+                                }
+                            </select>
+                            break;
+                         case ScriptArgument scriptArgument:
+                             <select value="@(string.IsNullOrEmpty(scriptArgument.FunctionName) || !ScriptArgument.PredefinedScripts[scriptArgument.ID].ContainsKey(scriptArgument.FunctionName) ? "new" : scriptArgument.FunctionName)" @onchange="@(e => { if (e.Value.ToString() == "new" || !ScriptArgument.PredefinedScripts[scriptArgument.ID].ContainsKey(e.Value.ToString())) scriptArgument.Reset(); else scriptArgument.CopyFrom(ScriptArgument.PredefinedScripts[scriptArgument.ID][e.Value.ToString()]); })">
+                                 <option value="new">új</option>
+                                 @foreach (var functionName in ScriptArgument.PredefinedScripts[scriptArgument.ID].Keys)
+                                 {
+                                     <option value="@functionName">@functionName</option>
+                                 }
+                             </select>
+                             <br>
+                             <div class="scriptinput">
+                                 function&nbsp;@if (scriptArgument.Final){<input type="text" maxlength="21" value="@scriptArgument.FunctionName" disabled>}else{<input type="text" maxlength="21" value="@scriptArgument.FunctionName" @onchange="@(e => scriptArgument.FunctionName = e.Value.ToString())">}(@string.Join(", ", scriptArgument.Arguments))
+                                 <br>
+                                 {
+                                 <br>
+                                 &emsp;&emsp;@if (scriptArgument.Final){<textarea disabled>@scriptArgument.FunctionBody</textarea>}else{<textarea @onchange="@(e => scriptArgument.FunctionBody = e.Value.ToString())">@scriptArgument.FunctionBody</textarea>}
+                                 <br>
+                                 &emsp;&emsp;return&nbsp;@if(scriptArgument.Final){<input id="returninput" type="text" value="@scriptArgument.ReturnExpression" disabled>}else{<input id="returninput" type="text" value="@scriptArgument.ReturnExpression" @onchange="@(e => scriptArgument.ReturnExpression = e.Value.ToString())">}
+                                 <br>
+                                 }
+                             </div>
+                             break;
+                    }
+                    <br>
+                }
+                <button @onclick="@ExecuteAlgorithm">Futtatás</button>
+                <button @onclick="@CloseAlgorithmModal">Mégsem</button>
+                break;
+            case Modal.Import:
+                <h2>Gráf importálása</h2>
+                <p>
+                    Minta:
+                    <select value="@Template" @onchange="@(e => UpdateTemplate(e.Value.ToString()))">
+                        <option value=""></option>
+                        @foreach (var pair in TemplateGraphs)
+                        {
+                            <option value="@pair.Key">@pair.Key</option>
+                        }
+                    </select>
+                </p>
+                <textarea placeholder="Éllista" style="height: 150px;" @onchange="@(e => ImportString = e.Value.ToString())">@ImportString</textarea>
+                <br>
+                <button @onclick="@ConfirmImport">Importálás</button>
+                <button @onclick="@CloseImportModal">Mégsem</button>
+                break;
+            case Modal.AlgorithmDescription:
+                <h2>@ExecutingAlgorithmObj.FullName</h2>
+                <div class="overflowdiv">
+                    @((MarkupString)ExecutingAlgorithmObj.Description)
+                </div>
+                <button @onclick="@CloseAlgorithmDescriptionModal">Bezár</button>
+                break;
+            case Modal.EventHistory:
+                <h2>@ExecutingAlgorithmObj.FullName</h2>
+                <p style="text-align: left;">Algoritmus eseménytörténete:</p>
+                <div class="overflowdiv" style="height: 300px !IMPORTANT;">
+                    <ol>
+                        @foreach (var entry in ExecutingAlgorithmObj.EventHistory)
+                        {
+                            <li>@((MarkupString)entry)</li>
+                        }
+                    </ol>
+                </div>
+                <button @onclick="@CloseEventHistoryModal">Bezár</button>
+                break;
+        }
+    </div>
+</div>
+
+<div>
+    @if (ExecutingAlgorithm is null && !ResetButton)
+    {
+        @if (Nodes.Count == 0)
+        {
+            <button @onclick="@OpenImportModal">Gráf importálása</button>
+        }
+        else
+        {
+            <button @onclick="@CopyGraph">Gráf másolása</button>
+            <button @onclick="@ResetGraph">Gráf törlése</button>
+        }
+        <button @onclick="@OpenAddNodeModal">Új pont felvétele</button>
+        <button @onclick="@OpenAddEdgeModal">Új él felvétele</button>
+        @for (int i = 0; i < Algorithms.Length; i++)
+        {
+            var algorithm = Algorithms[i];
+            <button @onclick="@(() => OpenAlgorithmModal(algorithm))">@algorithm.Name</button>
+        }
+    }
+    else if(ExecutingAlgorithm is not null)
+    {
+        <button @onclick="@(() => StepAlgorithm())">Lépés</button>
+        <button @onclick="@JumpAlgorithm">Ugrás</button>
+        <button @onclick="@JumpToEnd">Ugrás a végére</button>
+    }
+    @if (ResetButton)
+    {
+        <button @onclick="@Reset">Visszaállítás</button>
+    }
+    @if (NumInfoPages > 1)
+    {
+        <button @onclick="@NextInfoPage">Adatváltás</button>
+    }
+    @if (ExecutingAlgorithmObj is not null)
+    {
+        <button @onclick="@OpenAlgorithmDescriptionModal">Leírás</button>
+        <a @onclick="@OpenEventHistoryModal">@((MarkupString)ExecutingAlgorithmObj.CurrentEvent)</a>
+    }
+</div>
+
+<CascadingValue Value="_diagram">
+    <DiagramCanvas></DiagramCanvas>
+</CascadingValue>

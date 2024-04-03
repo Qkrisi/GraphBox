@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>GraphBox</title>
+    <base href="/" />
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet" />
+    <link href="GraphUtil.styles.css" rel="stylesheet" />
+    <!-- in the head element -->
+    <link href="_content/Z.Blazor.Diagrams/style.min.css" rel="stylesheet" />
+    <!-- if you want the default styling -->
+    <link href="_content/Z.Blazor.Diagrams/default.styles.min.css" rel="stylesheet" />
+    <style> .diagram-canvas { width: 100%; height: 100%; position: absolute; outline: none; overflow: hidden; cursor: grab; touch-action: none; }</style>
+    <script src="graphutil.js"></script>
+</head>
+
+<body>
+    <!-- in the body element -->
+    <script src="_content/Z.Blazor.Diagrams/script.min.js"></script>
+    <div id="app">Betöltés...</div>
+
+    <div id="blazor-error-ui">
+        Hiba történt.
+        <a href="" class="reload">Újratöltés</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    <script src="_framework/blazor.webassembly.js"></script>
+</body>
+
+</html>
