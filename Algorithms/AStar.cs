@@ -80,6 +80,10 @@ public class AStar : AlgorithmBase
                                             <li><code>x</code> - A csúcs X koordinátája</li>
                                             <li><code>y</code> - A csúcs Y koordinátája</li>
                                           </ul>
+                                          <hr>
+                                          <strong>Felhasznált irodalom:</strong>
+                                          <br>
+                                          <a target="_blank" href="https://en.wikipedia.org/wiki/A*_search_algorithm">Wikipedia: A* search algorithm</a>
                                           """;
 
     public override AlgorithmArgumentBase[] Arguments => new AlgorithmArgumentBase[] { StartNode, EndNode, HeuristicScript };

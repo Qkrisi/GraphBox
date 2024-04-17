@@ -98,6 +98,10 @@ public class BellmanFord : AlgorithmBase
                                                 &emsp;Ciklus vége<br>
                                             Vége
                                           </code>
+                                          <hr>
+                                          <strong>Felhasznált irodalom:</strong>
+                                          <br>
+                                          <a target="_blank" href="https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm">Wikipedia: Bellman-Ford algorithm</a>
                                           """;
 
     public override AlgorithmArgumentBase[] Arguments => new AlgorithmArgumentBase[] { StartNode };

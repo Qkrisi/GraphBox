@@ -90,6 +90,12 @@ public class Kosaraju : AlgorithmBase
                                             &emsp;Ciklus vége<br>
                                           Vége
                                           </code>
+                                          <hr>
+                                          <strong>Felhasznált irodalom:</strong>
+                                          <br>
+                                          <a target="_blank" href="https://en.wikipedia.org/wiki/Kosaraju%27s_algorithm">Wikipedia: Kosaraju's algorithm</a>
+                                          <br>
+                                          <a target="_blank" href="https://cp-algorithms.com/graph/strongly-connected-components.html">CP-Algorithms: Finding strongly connected components</a>
                                           """;
 
     private IEnumerator Traverse1(Stack<GraphNode> stack, GraphNode node)

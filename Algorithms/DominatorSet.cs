@@ -90,6 +90,10 @@ public class DominatorSet : AlgorithmBase
                                             &emsp;Ciklus vége<br>
                                           Vége
                                           </code>
+                                          <hr>
+                                          <strong>Felhasznált irodalom:</strong>
+                                          <br>
+                                          <a target="_blank" href="http://tehetseg.inf.elte.hu/szakkor/2023/grafok-3.pptx">ELTE: Gráfok, Gráfalgoritmusok III.</a>
                                           """;
 
     private IEnumerator Traverse1(Stack<GraphNode> stack, GraphNode node)

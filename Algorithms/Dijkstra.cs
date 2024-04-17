@@ -75,6 +75,12 @@ public class Dijkstra : AlgorithmBase
                                             &emsp;Amíg vége<br>
                                           Vége
                                           </code>
+                                          <hr>
+                                          <strong>Felhasznált irodalom:</strong>
+                                          <br>
+                                          <a target="_blank" href="http://tehetseg.inf.elte.hu/szakkor/2019/grafok-2.ppt">ELTE: Gráfok, Gráfalgoritmusok II.</a>
+                                          <br>
+                                          <a target="_blank" href="https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm">Wikipedia: Dijkstra's algorithm</a>
                                           """;
 
     public override AlgorithmArgumentBase[] Arguments => new AlgorithmArgumentBase[] { StartNode };

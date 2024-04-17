@@ -101,7 +101,7 @@ public partial class Index
         var isolatedPoints = new List<string>();
         foreach (var node in Nodes.Values)
         {
-            if(node.AdjNodes.Count == 0)
+            if (node.AdjNodes.Count == 0 && !Nodes.Values.Any(p => p.AdjNodes.Any(q => q.Node == node)))
                 isolatedPoints.Add(node.Text);
         }
         var edges = new List<string>();

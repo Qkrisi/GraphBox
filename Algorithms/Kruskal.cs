@@ -103,6 +103,16 @@ public class Kruskal : AlgorithmBase
                                             &emsp;Ciklus vége<br>
                                           Vége
                                           </code>
+                                          <hr>
+                                          <strong>Felhasznált irodalom:</strong>
+                                          <br>
+                                          <a target="_blank" href="http://tehetseg.inf.elte.hu/szakkor/2023/grafok-3.pptx">ELTE: Gráfok, Gráfalgoritmusok III.</a>
+                                          <br>
+                                          <a target="_blank" href="https://en.wikipedia.org/wiki/Kruskal%27s_algorithm">Wikipedia: Kruskal's algorithm</a>
+                                          <br>
+                                          <a target="_blank" href="https://en.wikipedia.org/wiki/Disjoint-set_data_structure">Wikipedia: Disjoint-set data structure</a>
+                                          <br>
+                                          <a target="_blank" href="https://cp-algorithms.com/data_structures/disjoint_set_union.html">CP-Algorithms: Disjoint Set Union</a>
                                           """;
 
     private GraphNode Find(GraphNode node)

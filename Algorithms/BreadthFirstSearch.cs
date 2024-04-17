@@ -58,6 +58,10 @@ public class BreadthFirstSearch : AlgorithmBase
                                                 &emsp;Ciklus vége<br>
                                             Vége
                                           </code>
+                                          <hr>
+                                          <strong>Felhasznált irodalom:</strong>
+                                          <br>
+                                          <a target="_blank" href="http://tehetseg.inf.elte.hu/szakkor/2023/grafok-1.pptx">ELTE: Gráfok, Gráfalgoritmusok I.</a>
                                           """;
 
     public override AlgorithmArgumentBase[] Arguments => new AlgorithmArgumentBase[] { StartNode };

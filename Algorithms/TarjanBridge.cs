@@ -106,6 +106,14 @@ public class TarjanBridge : AlgorithmBase
                                             &emsp;Állapot(P) := 2<br>
                                           Vége
                                           </code>
+                                          <hr>
+                                          <strong>Felhasznált irodalom:</strong>
+                                          <br>
+                                          <a target="_blank" href="http://tehetseg.inf.elte.hu/szakkor/2023/grafok-3.pptx">ELTE: Gráfok, Gráfalgoritmusok III.</a>
+                                          <br>
+                                          <a target="_blank" href="https://cp-algorithms.com/graph/bridge-searching.html">CP-Algorithms: Finding bridges in a graph in O(N + M)</a>
+                                          <br>
+                                          <a target="_blank" href="https://cp-algorithms.com/graph/cutpoints.html">CP-Algorithms: Finding articulation points in a graph in O(N + M)</a>
                                           """;
 
     private int Time;
